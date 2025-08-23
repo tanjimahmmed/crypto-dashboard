@@ -1,7 +1,9 @@
 import {useState, useEffect} from 'react';
-import CoinCard from './components/coinCard';
-import LimitSelector from './components/LimitSelector';
-import FilterInput from './components/FilterInput';
+import Header from './components/Header';
+import HomePage from './pages/home';
+import AboutPage from './pages/about';
+import {Routes, Route} from 'react-router';
+import NotFoundPage from './pages/not-found';
 const API_URL = import.meta.env.VITE_API_URL;
 
 const App = () => {
@@ -10,6 +12,7 @@ const App = () => {
   const [error, setError] = useState(null);
   const [limit, setLimit] = useState(10);
   const [filter, setFilter] = useState('');
+  const [sortBy, setSortBy] = useState('market_cap_desc')
 
   useEffect(() => {
     const fetchCoins = async () => {
@@ -28,31 +31,27 @@ const App = () => {
     fetchCoins();
   }, [limit]);
 
-  const filteredCoins = coins.filter((coin) => {
-    return (
-      coin.name.toLowerCase().includes(filter.toLowerCase()) || coin.symbol.toLowerCase().includes(filter.toLowerCase())
-    )
-  })
+  
 
   return (
-    <div>
-      <h1>🚀 Crypto Dash</h1>
-      {loading && <p>Loading...</p>}
-      {error && <div className='error'>{error}</div>}
-
-    <div className='top-controls'>
-      <FilterInput filter={filter} onFilterChange={setFilter} />
-      <LimitSelector limit={limit} onLimitChange={setLimit} />
-    </div>
-
-      {!loading && !error && (
-        <main className='grid'>
-          {filteredCoins.length > 0 ? filteredCoins.map((coin) => (
-            <CoinCard key={coin.id} coin={coin} />
-          )) : (<p>No Matching Coins</p>)}
-        </main>
-      )}
-    </div>
+    <>
+    <Header/>
+    <Routes>
+      <Route path='/' element={<HomePage
+      coins={coins}
+      filter={filter}
+      setFilter={setFilter}
+      limit={limit}
+      setLimit={setLimit}
+      sortBy={sortBy}
+      setSortBy={setSortBy}
+      loading={loading}
+      error={error}
+      />} />
+      <Route path='/about' element={<AboutPage/>}/>
+      <Route path='*' element={<NotFoundPage/>}/>
+    </Routes>
+  </>
   )
 }
 
