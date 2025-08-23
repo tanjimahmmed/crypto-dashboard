@@ -64,8 +64,38 @@ const CoinChart = ({coinId}) => {
         fetchPrices();
     }, [coinId])
 
+if(loading) return <p>Loading Chart...</p>
+
   return (
-    <>chart</>
+    <div style={{marginTop: '30px'}}>
+        <Line
+        data={chartData}
+        options={{
+            responsive: true,
+            plugins: {
+                legend: {display: false},
+                tooltip: {mode: 'index', intersect: false}
+            },
+            scales: {
+                x: {
+                    type: 'time',
+                    time: {
+                        unit: 'day',
+                    },
+                    ticks: {
+                        autoSkip: true,
+                        maxTicksLimit: 7,
+                    },
+                },
+                y: {
+                    ticks: {
+                        callback: (value) => `$${value.toLocaleString()}`,
+                    },
+                },
+            }
+        }}
+        />
+    </div>
   )
 }
 
